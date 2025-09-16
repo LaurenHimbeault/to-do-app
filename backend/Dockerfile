@@ -1,20 +1,21 @@
-# Build
-FROM node:20-alpine AS build
+# --- Build stage ---
+FROM node:20-bookworm AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npm run prisma:generate
+# generate Prisma client during build (uses devDeps)
+RUN npx prisma generate
 RUN npm run build
 
-# Runtime
-FROM node:20-alpine
-WORKDIR /app
+# --- Runtime stage ---
+FROM node:20-bookworm
 ENV NODE_ENV=production
-COPY --from=build /app/package*.json ./
-RUN npm ci --omit=dev
+ENV PORT=8080
+WORKDIR /app
+# Reuse the built node_modules that already contains the generated client
+COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/prisma ./prisma
-ENV PORT=8080
 EXPOSE 8080
 CMD ["node", "dist/index.js"]
