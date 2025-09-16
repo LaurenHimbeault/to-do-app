@@ -9,6 +9,15 @@ export async function routes(app: FastifyInstance) {
     return prisma.todo.findMany({ orderBy: { createdAt: "desc" } });
   });
 
+  app.get("/", async () => `
+    <h1>Todo API</h1>
+    <ul>
+      <li><a href="/health">/health</a></li>
+      <li><a href="/todos">/todos</a> (GET, POST)</li>
+    </ul>
+  `);
+
+
   app.post("/todos", async (req, reply) => {
     const body = z.object({ title: z.string().min(1) }).parse(req.body);
     const todo = await prisma.todo.create({ data: { title: body.title } });

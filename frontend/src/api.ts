@@ -1,8 +1,13 @@
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8080";
+const API_BASE = import.meta.env.VITE_API_BASE;
+if (!API_BASE) {
+  throw new Error("VITE_API_BASE is not defined");
+}
+
 export async function getTodos() {
   const r = await fetch(`${API_BASE}/todos`);
   return r.json();
 }
+
 export async function addTodo(title: string) {
   const r = await fetch(`${API_BASE}/todos`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title }) });
   return r.json();
