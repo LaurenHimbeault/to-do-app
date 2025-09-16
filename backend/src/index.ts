@@ -1,6 +1,6 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import { routes } from "./routes"; // ⬅️ no ".js" in TS source!
+import { routes } from "./routes"; // no ".js" here
 
 async function main() {
   const app = Fastify({ logger: true });
@@ -9,19 +9,19 @@ async function main() {
     origin: [
       "http://localhost:5173",
       "https://to-do-app-phi-blush.vercel.app",
-      /\.vercel\.app$/,
+      /\.vercel\.app$/ // preview deploys
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type"]
   });
 
-  // Simple /health directly here so we know index.ts is running
+  // Simple health here so we know index.ts runs
   app.get("/health", async () => "OK");
 
-  // ✅ register your todos routes BEFORE listen()
+  // Register all API routes
   await app.register(routes);
 
-  // 🔎 diagnostics
+  // Diagnostics: list routes in prod
   app.get("/__routes", () => app.printRoutes());
   app.ready(() => app.log.info("\n" + app.printRoutes()));
 

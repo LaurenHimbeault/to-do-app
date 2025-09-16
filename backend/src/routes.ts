@@ -1,14 +1,15 @@
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { prisma } from "./db"; // ⬅️ no ".js"
+import { prisma } from "./db"; // no ".js"
 
 export async function routes(app: FastifyInstance) {
-  // (optional) keep this if you want / to show links
+  // landing (optional)
   app.get("/", async () => `
     <h1>Todo API</h1>
     <ul>
       <li><a href="/health">/health</a></li>
       <li><a href="/todos">/todos</a> (GET, POST, PATCH/PUT, DELETE)</li>
+      <li><a href="/__routes">/__routes</a> (diagnostics)</li>
     </ul>
   `);
 
@@ -23,16 +24,22 @@ export async function routes(app: FastifyInstance) {
     return todo;
   });
 
-  // Support both PATCH and PUT (some UIs use PATCH to toggle)
+  // Support both PATCH and PUT
   app.patch("/todos/:id", async (req) => {
     const params = z.object({ id: z.coerce.number() }).parse(req.params);
-    const body = z.object({ title: z.string().optional(), done: z.boolean().optional() }).parse(req.body);
+    const body = z.object({
+      title: z.string().optional(),
+      done: z.boolean().optional()
+    }).parse(req.body);
     return prisma.todo.update({ where: { id: params.id }, data: body });
   });
 
   app.put("/todos/:id", async (req) => {
     const params = z.object({ id: z.coerce.number() }).parse(req.params);
-    const body = z.object({ title: z.string().optional(), done: z.boolean().optional() }).parse(req.body);
+    const body = z.object({
+      title: z.string().optional(),
+      done: z.boolean().optional()
+    }).parse(req.body);
     return prisma.todo.update({ where: { id: params.id }, data: body });
   });
 
