@@ -1,14 +1,17 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import { routes } from "./routes.js";
 
 const app = Fastify({ logger: true });
 
-app.register(cors, { origin: "*" });
-app.register(routes);
-
-const port = Number(process.env.PORT) || 8080;
-app.listen({ host: "0.0.0.0", port }).catch((err) => {
-  app.log.error(err);
-  process.exit(1);
+await app.register(cors, {
+  // allow localhost dev and your Vercel site (and any preview *.vercel.app)
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:8080",
+    "https://to-do-app-phi-blush.vercel.app",
+    /\.vercel\.app$/ // allows preview URLs like https://<hash>-yourapp.vercel.app
+  ],
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+  credentials: false
 });
