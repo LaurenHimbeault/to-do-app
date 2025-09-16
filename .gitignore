@@ -1,0 +1,14 @@
+# Node
+node_modules/
+npm-debug.log*
+pnpm-lock.yaml
+yarn.lock
+# Build output
+dist/
+# Env files
+.env
+.env.*
+!/backend/.env.example
+!/frontend/.env.example
+# Mac
+.DS_Store
