@@ -13,12 +13,6 @@ export async function routes(app: FastifyInstance) {
     </ul>
   `);
 
-  app.addHook("onRequest", (req, _reply, done) => {
-    req.url = req.url.replace(/\/{2,}/g, "/"); // collapse // -> /
-    done();
-  });
-
-
   app.get("/todos", async () =>
     prisma.todo.findMany({ orderBy: { createdAt: "desc" } })
   );
